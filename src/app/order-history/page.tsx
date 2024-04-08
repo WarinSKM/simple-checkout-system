@@ -8,7 +8,7 @@ export interface OrderHistoryItem {
   id: string;
   items: OrderItem[];
   createTime: string;
-  paymentMethod?: string;
+  paymentMethod: "tranfer" | "cash";
 }
 
 function OrderHistory() {
@@ -21,6 +21,7 @@ function OrderHistory() {
         { title: "badana sa", price: 290, quatity: 4, imageUrl: "" },
         { title: "badana se", price: 390, quatity: 4, imageUrl: "" },
       ],
+      paymentMethod: "cash",
       createTime: "02/04/2567 12:22",
     },
     {
@@ -31,6 +32,7 @@ function OrderHistory() {
         { title: "badana sa", price: 290, quatity: 4, imageUrl: "" },
         { title: "badana se", price: 390, quatity: 4, imageUrl: "" },
       ],
+      paymentMethod: "tranfer",
       createTime: "02/04/2567 12:22",
     },
     {
@@ -41,6 +43,7 @@ function OrderHistory() {
         { title: "badana sa", price: 290, quatity: 4, imageUrl: "" },
         { title: "badana se", price: 390, quatity: 4, imageUrl: "" },
       ],
+      paymentMethod: "tranfer",
       createTime: "02/04/2567 12:22",
     },
     {
@@ -51,6 +54,7 @@ function OrderHistory() {
         { title: "badana sa", price: 290, quatity: 4, imageUrl: "" },
         { title: "badana se", price: 390, quatity: 4, imageUrl: "" },
       ],
+      paymentMethod: "cash",
       createTime: "02/04/2567 12:22",
     },
   ];
@@ -58,15 +62,29 @@ function OrderHistory() {
   return (
     <main className="min-h-screen p-6">
       <Link href="/">
-        <Button variant="link" className="mb-5">Back to Home</Button>
+        <Button variant="link" className="mb-5">
+          Back to Home
+        </Button>
       </Link>
       <div>
         <h1 className="text-4xl mb-4">Order History</h1>
+        <div className="grid grid-cols-4 gap-4 mb-6">
+          <div className="border border-primary rounded-xl p-4 text-2lx">
+            <p>Tranfer Total</p>
+            <p>$ 20,000</p>
+          </div>
+          <div className="border border-primary rounded-xl p-4 text-2lx">
+            <p>Cash Total</p>
+            <p>$ 20,000</p>
+          </div>
+        </div>
+        <div className="border border-primary rounded-xl p-6">Filter coming soon...</div>
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Order No.</TableHead>
               <TableHead>Order Create Time</TableHead>
+              <TableHead>Payment Method</TableHead>
               <TableHead>Order Total Quatity</TableHead>
               <TableHead>Order Total Price</TableHead>
               <TableHead>Order Total Detail</TableHead>
@@ -77,6 +95,7 @@ function OrderHistory() {
               <TableRow key={item.id}>
                 <TableCell>{item.id}</TableCell>
                 <TableCell>{item.createTime}</TableCell>
+                <TableCell>{item.paymentMethod}</TableCell>
                 <TableCell>{item.items.reduce((prev, next) => prev + next.quatity, 0)}</TableCell>
                 <TableCell>{item.items.reduce((prev, next) => prev + next.price * next.quatity, 0).toLocaleString("us-Us")}</TableCell>
                 <TableCell>

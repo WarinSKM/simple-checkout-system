@@ -87,7 +87,9 @@ function NewOrder() {
     <main className="min-h-screen grid grid-cols-[2fr_1fr] p-6 gap-4 relative">
       <div className="col-span-2">
         <Link href="/">
-          <Button variant="link" className="mb-5">Back to Home</Button>
+          <Button variant="link" className="mb-5">
+            Back to Home
+          </Button>
         </Link>
       </div>
       <Card className="">
@@ -124,7 +126,7 @@ function NewOrder() {
           </div>
         </ScrollArea>
         <CardFooter className="flex justify-between pb-4">
-          <p>
+          <p className="text-3xl">
             Total <span>฿ {orderList.reduce((prev, val) => prev + val.price * val.quatity, 0).toLocaleString("us-Us")}</span>
           </p>
           <OrderResultDialog orderItems={orderList} />

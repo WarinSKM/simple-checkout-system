@@ -26,20 +26,20 @@ function OrderItem({ className, product, onAdd, onMinus, onRemove }: OrderItempr
         </div>
         <div className="flex items-center justify-between mt-4">
           <div className="flex items-center">
-            <Button variant="ghost" className="group" size="icon-sm" onClick={onMinus}>
-              <div className="w-5 h-5 rounded-full border group-hover:border-primary-foreground border-foreground text-foreborder-foreground flex justify-center items-center">
+            <Button variant="ghost" className="group w-12 h-12" size="icon" onClick={onMinus}>
+              <div className="w-10 h-10 rounded-full border group-hover:border-primary-foreground border-foreground text-foreborder-foreground flex justify-center items-center">
                 <Minus width={15} height={15} />
               </div>
             </Button>
             <p className="mx-2">{product.quatity}</p>
-            <Button variant="ghost" className="group" size="icon-sm" onClick={onAdd}>
-              <div className="w-5 h-5 rounded-full border group-hover:border-primary-foreground border-foreground text-foborder-foreground flex justify-center items-center">
+            <Button variant="ghost" className="group w-12 h-12" size="icon" onClick={onAdd}>
+              <div className="w-10 h-10 rounded-full border group-hover:border-primary-foreground border-foreground text-foborder-foreground flex justify-center items-center">
                 <Plus width={15} height={15} />
               </div>
             </Button>
           </div>
-          <Button variant="ghost" className="group hover:bg-destructive hover:text-destructive-foreground" size="icon-sm" onClick={onRemove}>
-            <div className="w-6 h-6 rounded-full border group-hover:border-destructive-foreground border-foreground text-foborder-foreground flex justify-center items-center">
+          <Button variant="ghost" className="group w-12 h-12 hover:bg-destructive hover:text-destructive-foreground" size="icon" onClick={onRemove}>
+            <div className="w-10 h-10 rounded-full border group-hover:border-destructive-foreground border-foreground text-foborder-foreground flex justify-center items-center">
               <Trash width={15} height={15} />
             </div>
           </Button>

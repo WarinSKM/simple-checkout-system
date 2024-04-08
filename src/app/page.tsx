@@ -32,14 +32,14 @@ export default function Home() {
             </div>
           </Button>
         </Link>
-        <Link href="/manage-product">
+        {/* <Link href="/manage-product">
           <Button variant="outline" className="h-32 w-full">
             <div className="flex flex-col justify-center items-center">
               <Box className="mb-3" height={50} width={50} />
               <p className="text-2xl">จัดการสินค้า</p>
             </div>
           </Button>
-        </Link>
+        </Link> */}
       </div>
     </main>
   );

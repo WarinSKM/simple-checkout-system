@@ -1,5 +1,5 @@
-function ManageProduct() {
-  return <main className="min-h-screen">ManageProduct</main>;
-}
+// function ManageProduct() {
+//   return <main className="min-h-screen">ManageProduct</main>;
+// }
 
-export default ManageProduct;
+// export default ManageProduct;
