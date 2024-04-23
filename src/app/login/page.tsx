@@ -12,7 +12,6 @@ function Login() {
 
   const loginSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    console.log("loginSubmit");
     router.replace("/");
   };
 
