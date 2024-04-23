@@ -10,30 +10,32 @@ import tailwindcssConfig from "@/../tailwind.config";
 import ConfirmOrderDialog from "./ConfirmOrderDialog";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PaymentMethod } from "@/app/type";
 
 interface OrderResultDialogProps {
   orderItems: OrderItem[];
+  onConfirmOrder: (payMethod: PaymentMethod) => Promise<void>;
 }
 
-function OrderResultDialog({ orderItems }: OrderResultDialogProps) {
+function OrderResultDialog({ orderItems, onConfirmOrder }: OrderResultDialogProps) {
   const fullConfig = resolveConfig(tailwindcssConfig);
   const [open, setOpen] = useState(false);
-  const [payMethod, setPaymethod] = useState("");
+  const [payMethod, setPaymethod] = useState<PaymentMethod | ''>("");
   const [openConfirm, setOpenConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [radioRequire, setRadioRequire] = useState(false);
   const [submitCount, setSubmitCount] = useState(0);
 
-  const OrderItem = ({ title, quatity, price }: OrderItem) => {
+  const OrderItem = ({ product_name, quatity, product_price }: OrderItem) => {
     return (
       <li className="border-b-[1px] mb-3 px-4 py-1">
         <div className="flex items-start justify-between">
           <div>
             <p className="text-lg">
-              {title} <span className="text-xs ml-2">x{quatity}</span>
+              {product_name} <span className="text-xs ml-2">x{quatity}</span>
             </p>
           </div>
-          <p>฿ {quatity * price}</p>
+          <p>฿ {quatity * product_price}</p>
         </div>
       </li>
     );
@@ -60,10 +62,9 @@ function OrderResultDialog({ orderItems }: OrderResultDialogProps) {
   const onConfirm = async () => {
     setOpenConfirm(false);
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setOpen(false);
-    }, 1000);
+    await onConfirmOrder(payMethod as PaymentMethod);
+    setLoading(false);
+    setOpen(false);
   };
   const onCancel = async () => {
     setOpen(false);
@@ -83,26 +84,26 @@ function OrderResultDialog({ orderItems }: OrderResultDialogProps) {
           <div className="">
             <ol>
               {orderItems.map((item) => (
-                <OrderItem key={item.title} {...item} />
+                <OrderItem key={item.product_name} {...item} />
               ))}
             </ol>
           </div>
           <div className="flex items-center justify-between">
             <p className="text-4xl">Total</p>
-            <p className="text-4xl">฿ {orderItems.reduce((prev, nextItem) => prev + nextItem.price * nextItem.quatity, 0)}</p>
+            <p className="text-4xl">฿ {orderItems.reduce((prev, nextItem) => prev + nextItem.product_price * nextItem.quatity, 0)}</p>
           </div>
           <div className="flex items-center justify-center">
             <RadioGroup
               value={payMethod}
               onValueChange={(e) => {
                 setRadioRequire(false);
-                setPaymethod(e);
+                setPaymethod(e as PaymentMethod);
               }}
               className="flex"
               required
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="default" id="r1" className="hidden peer" />
+                <RadioGroupItem value="tranfer" id="r1" className="hidden peer" />
                 <Label
                   htmlFor="r1"
                   className={cn(
@@ -118,7 +119,7 @@ function OrderResultDialog({ orderItems }: OrderResultDialogProps) {
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="comfortable" id="r2" className="hidden peer" />
+                <RadioGroupItem value="cash" id="r2" className="hidden peer" />
                 <Label
                   htmlFor="r2"
                   className={cn(

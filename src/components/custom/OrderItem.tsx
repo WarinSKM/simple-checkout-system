@@ -21,8 +21,8 @@ function OrderItem({ className, product, onAdd, onMinus, onRemove }: OrderItempr
     <Card className={className}>
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
-          <CardDescription>{product.title}</CardDescription>
-          <CardDescription>฿ {product.price * product.quatity}</CardDescription>
+          <CardDescription>{product.product_name}</CardDescription>
+          <CardDescription>฿ {product.product_price * product.quatity}</CardDescription>
         </div>
         <div className="flex items-center justify-between mt-4">
           <div className="flex items-center">

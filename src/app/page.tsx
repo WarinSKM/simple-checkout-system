@@ -12,7 +12,7 @@ export default function Home() {
           <Button variant="outline" className="h-32 w-full mb-8">
             <div className="flex flex-col justify-center items-center">
               <ShoppingCart className="mb-3" height={50} width={50} />
-              <p className="text-2xl">เพิ่มคำสั่งซื้อใหม่</p>
+              <p className="text-2xl">Create Order</p>
             </div>
           </Button>
         </Link>
@@ -20,7 +20,7 @@ export default function Home() {
           <Button variant="outline" className="h-32 w-full mb-8">
             <div className="flex flex-col justify-center items-center">
               <File className="mb-3" height={50} width={50} />
-              <p className="text-2xl">ประวัติคำสั่งซื้อ</p>
+              <p className="text-2xl">Order History</p>
             </div>
           </Button>
         </Link>
@@ -28,7 +28,7 @@ export default function Home() {
           <Button variant="outline" className="h-32 w-full mb-8">
             <div className="flex flex-col justify-center items-center">
               <File className="mb-3" height={50} width={50} />
-              <p className="text-2xl">สรุปการขาย</p>
+              <p className="text-2xl">Sale Summary</p>
             </div>
           </Button>
         </Link>
