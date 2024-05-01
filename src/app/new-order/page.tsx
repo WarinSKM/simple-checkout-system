@@ -23,6 +23,7 @@ interface OrderItem extends ProductInfo {
 }
 
 function NewOrder() {
+  const [accordion, setAccordion] = useState(["normal", "discount", "free"])
   const [productList, setProductList] = useState<ProductInfo[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const config = resolveConfig(tailwindcssConfig);
@@ -172,6 +173,10 @@ function NewOrder() {
     clearOrder();
   };
 
+  const onAccordionChange = (e: string[]) => {
+    setAccordion(e)
+  }
+
   return (
     <main className="min-h-screen p-6 flex flex-col">
       <div className="col-span-full h-fit mb-5">
@@ -181,14 +186,14 @@ function NewOrder() {
           </Button>
         </Link>
       </div>
-      <div className="grid grid-cols-[2fr_1fr] gap-4 relative flex-grow">
+      <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] gap-4 relative flex-grow">
         <Card className="">
           <CardHeader>
             <CardTitle>Product</CardTitle>
           </CardHeader>
           <CardContent className="overflow-y-auto">
             {!loadingProducts ? (
-              <Accordion type="multiple" className="w-full">
+              <Accordion type="multiple" value={accordion} onValueChange={onAccordionChange} className="w-full">
                 <AccordionItem value="normal">
                   <AccordionTrigger>
                     <div className="w-full flex justify-between items-center">
@@ -196,7 +201,7 @@ function NewOrder() {
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {productNormal.map((product, index) => (
                         <ProductCard key={index} product={product} className="mb-4" onclick={addProductToOrder} />
                       ))}
@@ -210,7 +215,7 @@ function NewOrder() {
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {productDiscount.map((product, index) => (
                         <ProductCard key={index} product={product} className="mb-4" onclick={addProductToOrder} />
                       ))}
@@ -224,7 +229,7 @@ function NewOrder() {
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {productFree.map((product, index) => (
                         <ProductCard key={index} product={product} className="mb-4" onclick={addProductToOrder} />
                       ))}
