@@ -5,9 +5,12 @@ import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, Table
 import Link from "next/link";
 import OrderDetail from "@/components/custom/OrderDetail";
 import { useEffect, useMemo, useState } from "react";
-import { collection, getDocs, query, Timestamp, orderBy } from "firebase/firestore";
+import { collection, getDocs, query, Timestamp, orderBy, where, QueryFieldFilterConstraint, QueryConstraint } from "firebase/firestore";
 import { useFireStore } from "../utils/firebase";
 import { format } from "date-fns";
+import { DatePickerWithRange } from "@/components/ui/date-range-picker";
+import { DateRange } from "react-day-picker";
+import { addDays } from "date-fns";
 
 export interface OrderHistoryItem {
   items: OrderItem[];
@@ -15,14 +18,30 @@ export interface OrderHistoryItem {
   order_payment_method: "tranfer" | "cash";
 }
 
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
 function OrderHistory() {
   const fireStore = useFireStore();
   const [loading, setLoading] = useState(true);
   const [orderHistoryList, setOrderHistoryList] = useState<OrderHistoryItem[]>([]);
+  const [date, setDate] = useState<DateRange | undefined>({ from: today });
 
   const fetchOrderHistory = async () => {
     setLoading(true);
-    const q = query(collection(fireStore, "orders"), orderBy("order_create_datetime", "desc"));
+    const firebase_query: QueryConstraint[] = [];
+    if (date?.from) firebase_query.push(where("order_create_datetime", ">=", date?.from));
+    if (date?.to){
+      const tempDateTo = addDays(date?.to, 1)
+      tempDateTo.setHours(0,0,0,0)
+       firebase_query.push(where("order_create_datetime", "<=", tempDateTo));
+      }
+    else if (date?.from) {
+      const tmr = addDays(date?.from, 1);
+      tmr.setHours(0, 0, 0, 0);
+      firebase_query.push(where("order_create_datetime", "<=", tmr));
+    }
+    const q = query(collection(fireStore, "orders"), ...firebase_query);
     const docSnapShot = await getDocs(q);
     const result: OrderHistoryItem[] = [];
     docSnapShot.forEach((doc) => {
@@ -31,6 +50,10 @@ function OrderHistory() {
     setOrderHistoryList(result);
     setLoading(false);
   };
+
+  useEffect(() => {
+    fetchOrderHistory();
+  }, [date]);
 
   const totalIncome = useMemo(() => {
     const result = orderHistoryList.reduce(
@@ -88,8 +111,19 @@ function OrderHistory() {
             <p>Cash Total</p>
             <p>$ {totalCash.toLocaleString("us-Us")}</p>
           </div>
+          <div className="border border-primary rounded-xl p-4 text-2lx">
+            <p>Total Order</p>
+            <p>{orderHistoryList.length.toLocaleString("us-Us")}</p>
+          </div>
         </div>
-        <div className="border border-primary rounded-xl p-6">Filter coming soon...</div>
+        <div className="border border-primary rounded-xl p-6">
+          <div className="flex items-center">
+            <div className="w-[100px]">
+              <p className="mr-4">Days</p>
+            </div>
+            <DatePickerWithRange value={date} onChange={setDate} />
+          </div>
+        </div>
         <Table>
           <TableHeader>
             <TableRow>

@@ -9,39 +9,78 @@ import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 import { useEffect, useState } from "react";
 import { DateRange, SelectRangeEventHandler } from "react-day-picker";
 import { useFireStore } from "../utils/firebase";
-import { collection, getDocs, orderBy, query, Timestamp } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, QueryConstraint, Timestamp, where } from "firebase/firestore";
+import { addDays, format } from "date-fns";
+import { createObjectCsvWriter } from "csv-writer";
+import axios from "axios";
 
-interface SaleSummaryItem {
+export interface SaleSummaryItem {
   product_name: string;
   total_sale: number;
   price: number;
   payment_method: PaymentMethod;
   brand: string;
-  date: Timestamp;
+  date: Date;
 }
 
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
 function SellSummary() {
-  const [date, setDate] = useState<DateRange | undefined>(undefined);
+  const [date, setDate] = useState<DateRange | undefined>({ from: today });
   const [loading, setLoading] = useState(true);
   const [sellHistory, setSellHistory] = useState<SaleSummaryItem[]>([]);
-
+  const [brand, setBrand] = useState("0");
+  const [paymentMethod, setPaymentMethod] = useState("0");
   const fireStore = useFireStore();
 
   const fetchTotalSale = async () => {
     setLoading(true);
-    const q = query(collection(fireStore, "sale_total"), orderBy("product_name", "asc"));
-    const docSnapShot = await getDocs(q);
-    const result: SaleSummaryItem[] = [];
-    docSnapShot.forEach((doc) => {
-      result.push(doc.data() as SaleSummaryItem);
-    });
-    setSellHistory(result);
+    const res = await axios.get("/api/sale-summary", { params: { date_from: date?.from, date_to: date?.to, brand, paymentMethod } });
+    setSellHistory(res.data);
     setLoading(false);
   };
 
   useEffect(() => {
     fetchTotalSale();
   }, []);
+  useEffect(() => {
+    fetchTotalSale();
+  }, [brand, date, paymentMethod]);
+
+  const createCSV = async () => {
+    const csvData = [["Product name", "Sales date", "Quantity", "Price per unit", "Total price", "Accumulated Income", "Payment Type"]];
+    let accumulatedIncome = 0;
+    for (let i = 0; i < sellHistory.length; i++) {
+      const element = sellHistory[i];
+      accumulatedIncome = (accumulatedIncome + element.total_sale * element.price)
+      const temp = [
+        element.product_name,
+        format(element.date, "dd/MM/yy"),
+        element.total_sale.toString(),
+        element.price.toString(),
+        (element.total_sale * element.price).toString(),
+        accumulatedIncome.toString(),
+        element.payment_method,
+      ];
+      csvData.push(temp);
+    }
+    console.log(csvData);
+    console.log(sellHistory);
+    let csvContent = "";
+    csvData.forEach((row) => {
+      csvContent += row.join(",") + "\n";
+    });
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8," });
+    const objUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", objUrl);
+    link.setAttribute("download", "sale-summary.csv");
+
+    // const linkEl = document.querySelector("body")!.append(link)
+    link.click()
+  };
 
   return (
     <main className="p-6">
@@ -50,7 +89,10 @@ function SellSummary() {
           Back to Home
         </Button>
       </Link>
-      <h1 className="text-4xl">Sale Summary</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-4xl">Sale Summary</h1>
+        <Button onClick={createCSV}>Export</Button>
+      </div>
       <div>
         <div className="my-4 border border-foreground grid grid-cols-2 p-6 rounded-lg">
           <div className="flex items-center">
@@ -63,15 +105,15 @@ function SellSummary() {
             <div className="w-[100px]">
               <p className="mr-4">brands</p>
             </div>
-            <Select>
+            <Select value={brand} onValueChange={(e) => setBrand(e)}>
               <SelectTrigger className="w-[300px] border-foreground">
                 <SelectValue placeholder="brand...."></SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="0">brand....</SelectItem>
-                <SelectItem value="Beppo">Bebpo</SelectItem>
+                <SelectItem value="Bebpo">Bebpo</SelectItem>
                 <SelectItem value="Gerro">Gerro</SelectItem>
-                <SelectItem value="Pekko">Peko</SelectItem>
+                <SelectItem value="Peko">Peko</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -79,7 +121,7 @@ function SellSummary() {
             <div className="w-[100px]">
               <p className="mr-4">Payment Method</p>
             </div>
-            <Select>
+            <Select value={paymentMethod} onValueChange={(e) => setPaymentMethod(e)}>
               <SelectTrigger className="w-[200px] border-foreground">
                 <SelectValue placeholder="Payment Method...."></SelectValue>
               </SelectTrigger>
@@ -95,6 +137,7 @@ function SellSummary() {
           <TableHeader>
             <TableRow>
               <TableHead>Product Name</TableHead>
+              <TableHead>Date</TableHead>
               <TableHead>Payment Method</TableHead>
               <TableHead>Brand</TableHead>
               <TableHead>Product Sold</TableHead>
@@ -105,6 +148,7 @@ function SellSummary() {
             {sellHistory.map((item) => (
               <TableRow key={item.product_name + item.payment_method}>
                 <TableCell>{item.product_name}</TableCell>
+                <TableCell>{format(item.date, "dd/MM/yy")}</TableCell>
                 <TableCell>
                   <div className="flex items-center">
                     <p className="block w-14">{item.payment_method}</p>
