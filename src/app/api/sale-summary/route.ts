@@ -16,14 +16,12 @@ export async function GET(req: NextRequest) {
   let date_from_params = req.nextUrl.searchParams.get("date_from");
   let date_to_params = req.nextUrl.searchParams.get("date_to");
   const brand = req.nextUrl.searchParams.get("brand");
-  const paymentMethod = req.nextUrl.searchParams.get("paymentMethod");
   let date_from: Date | null = null;
   let date_to: Date | null = null;
   if (date_from_params) date_from = new Date(date_from_params);
   if (date_to_params) date_to = new Date(date_to_params);
   const queryParams: QueryConstraint[] = [];
   if (brand !== "0") queryParams.push(where("brand", "==", brand));
-  if (paymentMethod !== "0") queryParams.push(where("payment_method", "==", paymentMethod));
   if (date_from) {
     queryParams.push(where("date", ">=", date_from));
   }

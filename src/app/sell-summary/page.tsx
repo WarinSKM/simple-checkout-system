@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Link from "next/link";
-import { PaymentMethod } from "../type";
 import { QrCode, Banknote } from "lucide-react";
 import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 import { useEffect, useState } from "react";
@@ -18,7 +17,6 @@ export interface SaleSummaryItem {
   product_name: string;
   total_sale: number;
   price: number;
-  payment_method: PaymentMethod;
   brand: string;
   date: Date;
 }
@@ -31,11 +29,10 @@ function SellSummary() {
   const [loading, setLoading] = useState(true);
   const [sellHistory, setSellHistory] = useState<SaleSummaryItem[]>([]);
   const [brand, setBrand] = useState("0");
-  const [paymentMethod, setPaymentMethod] = useState("0");
 
   const fetchTotalSale = async () => {
     setLoading(true);
-    const res = await axios.get("/api/sale-summary", { params: { date_from: date?.from, date_to: date?.to, brand, paymentMethod } });
+    const res = await axios.get("/api/sale-summary", { params: { date_from: date?.from, date_to: date?.to, brand } });
     setSellHistory(res.data);
     setLoading(false);
   };
@@ -45,14 +42,14 @@ function SellSummary() {
   }, []);
   useEffect(() => {
     fetchTotalSale();
-  }, [brand, date, paymentMethod]);
+  }, [brand, date]);
 
   const createCSV = async () => {
-    const csvData = [["Product name", "Sales date", "Quantity", "Price per unit", "Total price", "Accumulated Income", "Payment Type"]];
+    const csvData = [["Product name", "Sales date", "Quantity", "Price per unit", "Total price", "Accumulated Income"]];
     let accumulatedIncome = 0;
     for (let i = 0; i < sellHistory.length; i++) {
       const element = sellHistory[i];
-      accumulatedIncome = (accumulatedIncome + element.total_sale * element.price)
+      accumulatedIncome = accumulatedIncome + element.total_sale * element.price;
       const temp = [
         element.product_name,
         format(element.date, "dd/MM/yy"),
@@ -60,7 +57,6 @@ function SellSummary() {
         element.price.toString(),
         (element.total_sale * element.price).toString(),
         accumulatedIncome.toString(),
-        element.payment_method,
       ];
       csvData.push(temp);
     }
@@ -76,7 +72,7 @@ function SellSummary() {
     link.setAttribute("download", "sale-summary.csv");
 
     // const linkEl = document.querySelector("body")!.append(link)
-    link.click()
+    link.click();
   };
 
   return (
@@ -114,28 +110,12 @@ function SellSummary() {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex items-center mt-2">
-            <div className="w-[100px]">
-              <p className="mr-4">Payment Method</p>
-            </div>
-            <Select value={paymentMethod} onValueChange={(e) => setPaymentMethod(e)}>
-              <SelectTrigger className="w-[200px] border-foreground">
-                <SelectValue placeholder="Payment Method...."></SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="0">Payment Method....</SelectItem>
-                <SelectItem value="transfer">transfer</SelectItem>
-                <SelectItem value="cash">cash</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
         </div>
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Product Name</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead>Payment Method</TableHead>
               <TableHead>Brand</TableHead>
               <TableHead>Product Sold</TableHead>
               <TableHead>Totol income</TableHead>
@@ -143,15 +123,9 @@ function SellSummary() {
           </TableHeader>
           <TableBody>
             {sellHistory.map((item) => (
-              <TableRow key={item.product_name + item.payment_method}>
+              <TableRow key={item.product_name}>
                 <TableCell>{item.product_name}</TableCell>
                 <TableCell>{format(item.date, "dd/MM/yy")}</TableCell>
-                <TableCell>
-                  <div className="flex items-center">
-                    <p className="block w-14">{item.payment_method}</p>
-                    {item.payment_method === "transfer" ? <QrCode /> : <Banknote />}
-                  </div>
-                </TableCell>
                 <TableCell>{item.brand}</TableCell>
                 <TableCell>{item.total_sale}</TableCell>
                 <TableCell>{(item.price * item.total_sale).toLocaleString("us-Us")}</TableCell>
@@ -160,7 +134,7 @@ function SellSummary() {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={4}>
+              <TableCell colSpan={5}>
                 <p className="text-2xl">Total</p>
               </TableCell>
               <TableCell className="text-2xl">{sellHistory.reduce((prev, nextVal) => prev + nextVal.price * nextVal.total_sale, 0)}</TableCell>

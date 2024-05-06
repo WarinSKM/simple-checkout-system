@@ -56,13 +56,15 @@ function OrderHistory() {
     fetchOrderHistory();
   }, [date]);
 
-  const sellHistoryFilter = useMemo(() =>{
-    if(brand === '0') return orderHistoryList
-    return orderHistoryList.filter((item) => item.items.find(item => {
-      console.log(item.product_brand === brand)
-    return  item.product_brand === brand
-    }))
-  }, [orderHistoryList, brand])
+  const sellHistoryFilter = useMemo(() => {
+    if (brand === "0") return orderHistoryList;
+    return orderHistoryList.filter((item) =>
+      item.items.find((item) => {
+        console.log(item.product_brand === brand);
+        return item.product_brand === brand;
+      })
+    );
+  }, [orderHistoryList, brand]);
 
   const totalIncome = useMemo(() => {
     const result = sellHistoryFilter.reduce(
@@ -99,15 +101,30 @@ function OrderHistory() {
   }, []);
 
   const exportOrder = async () => {
-    const csvData = [["Order No", "Sales date", "Product Name", "Product Price", "Quantity", "Total Price","Accumulated Income", "Payment Method"]];
-    let totalIncome = 0
+    const csvData = [
+      [
+        "Order No",
+        "Sales date",
+        "Product Name",
+        "Brand",
+        "Product Category",
+        "Product Price",
+        "Quantity",
+        "Total Price",
+        "Accumulated Income",
+        "Payment Method",
+      ],
+    ];
+    let totalIncome = 0;
     for (let i = 0; i < sellHistoryFilter.length; i++) {
       const element = sellHistoryFilter[i];
       for (let j = 0; j < element.items.length; j++) {
-        const temp: string[] = [(i + 1).toString(), format(element.order_create_datetime.toDate(), 'dd/MM/yy')];
+        const temp: string[] = [(i + 1).toString(), format(element.order_create_datetime.toDate(), "dd/MM/yy")];
         const value = element.items[j];
-        totalIncome += value.product_price * value.quatity
+        totalIncome += value.product_price * value.quatity;
         temp.push(value.product_name);
+        temp.push(value.product_brand);
+        temp.push(value.product_category);
         temp.push(value.product_price.toString());
         temp.push(value.quatity.toString());
         temp.push((value.product_price * value.quatity).toString());

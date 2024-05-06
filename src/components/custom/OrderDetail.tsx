@@ -6,6 +6,7 @@ import { OrderItem } from "./OrderItem";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindcssConfig from "@/../tailwind.config";
 import { OrderHistoryItem } from "@/app/order-history/page";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface OrderDetailProps {
   orderItems: OrderHistoryItem;
@@ -40,13 +41,15 @@ function OrderDetail({ orderItems }: OrderDetailProps) {
           <DialogHeader>
             <DialogTitle>Confirm Order</DialogTitle>
           </DialogHeader>
-          <div className="">
-            <ol>
-              {orderItems.items.map((item) => (
-                <OrderItem key={item.product_name} {...item} />
-              ))}
-            </ol>
-          </div>
+          <ScrollArea className="h-[300px] md:h-[350px] lg:h-[300px] mb-3 border-b-2 flex-grow">
+            <div className="h-full">
+              <ol>
+                {orderItems.items.map((item) => (
+                  <OrderItem key={item.product_name} {...item} />
+                ))}
+              </ol>
+            </div>
+          </ScrollArea>
           <div className="flex items-center justify-between">
             <p>Total</p>
             <p>฿{orderItems.items.reduce((prev, nextItem) => prev + nextItem.product_price * nextItem.quatity, 0)}</p>

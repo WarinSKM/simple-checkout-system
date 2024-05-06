@@ -112,7 +112,7 @@ function NewOrder() {
     setOrderList([]);
   };
 
-  const updateProductTotal = async (paymentMethod: PaymentMethod) => {
+  const updateProductTotal = async () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     for (let i = 0; i < orderList.length; i++) {
@@ -120,7 +120,6 @@ function NewOrder() {
       const q = query(
         collection(fireStore, "sale_total"),
         where("date", "==", today),
-        where("payment_method", "==", paymentMethod),
         where("product_name", "==", element.product_name)
       );
       const tempDoc = await getDocs(q);
@@ -133,7 +132,6 @@ function NewOrder() {
         await addDoc(collection(fireStore, "sale_total"), {
           brand: element.product_brand,
           date: today,
-          payment_method: paymentMethod,
           price: element.product_price,
           product_name: element.product_name,
           total_sale: element.quatity,
@@ -144,7 +142,7 @@ function NewOrder() {
 
   const createOrder = async (paymentMethod: PaymentMethod) => {
     const day = new Date();
-    await updateProductTotal(paymentMethod);
+    await updateProductTotal();
     const orderResult = orderList.map((item) => {
       const temp = { ...item };
       delete temp.product_id;
