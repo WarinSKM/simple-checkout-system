@@ -23,7 +23,7 @@ interface OrderItem extends ProductInfo {
 }
 
 function NewOrder() {
-  const [accordion, setAccordion] = useState(["normal", "discount", "free"])
+  const [accordion, setAccordion] = useState(["product", "discount", "free"])
   const [productList, setProductList] = useState<ProductInfo[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const config = resolveConfig(tailwindcssConfig);
@@ -39,15 +39,6 @@ function NewOrder() {
     return productList.filter((item) => item.product_brand === 'Peko')
   }, [productList])
 
-  // const productNormal = useMemo(() => {
-  //   return productList.filter((item) => item.product_category === "normal");
-  // }, [productList]);
-  // const productDiscount = useMemo(() => {
-  //   return productList.filter((item) => item.product_category === "discount");
-  // }, [productList]);
-  // const productFree = useMemo(() => {
-  //   return productList.filter((item) => item.product_category === "free");
-  // }, [productList]);
 
   const fetchProducts = async () => {
     setLoadingProducts(true);
@@ -204,7 +195,7 @@ function NewOrder() {
           <CardContent className="overflow-y-auto">
             {!loadingProducts ? (
               <Accordion type="multiple" value={accordion} onValueChange={onAccordionChange} className="w-full">
-                <AccordionItem value="normal">
+                <AccordionItem value="product">
                   <AccordionTrigger>
                     <div className="w-full flex justify-between items-center">
                       <p>Product Bebpo</p>

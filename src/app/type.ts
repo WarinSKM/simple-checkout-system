@@ -2,4 +2,4 @@ export type PaymentMethod =  "transfer" | "cash";
 
 export type Brand = "Bebpo" | "Gerro" | "Peko"
 
-export type ProductCategory = "normal" | "discount" | "free"
+export type ProductCategory = "product" | "discount" | "free"
