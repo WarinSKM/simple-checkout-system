@@ -42,6 +42,7 @@ function OrderHistory() {
       tmr.setHours(0, 0, 0, 0);
       firebase_query.push(where("order_create_datetime", "<=", tmr));
     }
+    firebase_query.push(orderBy("order_create_datetime", 'desc'))
     const q = query(collection(fireStore, "orders"), ...firebase_query);
     const docSnapShot = await getDocs(q);
     const result: OrderHistoryItem[] = [];
