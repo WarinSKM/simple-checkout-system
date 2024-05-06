@@ -32,7 +32,6 @@ function SellSummary() {
   const [sellHistory, setSellHistory] = useState<SaleSummaryItem[]>([]);
   const [brand, setBrand] = useState("0");
   const [paymentMethod, setPaymentMethod] = useState("0");
-  const fireStore = useFireStore();
 
   const fetchTotalSale = async () => {
     setLoading(true);
@@ -65,8 +64,6 @@ function SellSummary() {
       ];
       csvData.push(temp);
     }
-    console.log(csvData);
-    console.log(sellHistory);
     let csvContent = "";
     csvData.forEach((row) => {
       csvContent += row.join(",") + "\n";
@@ -94,7 +91,7 @@ function SellSummary() {
         <Button onClick={createCSV}>Export</Button>
       </div>
       <div>
-        <div className="my-4 border border-foreground grid grid-cols-2 p-6 rounded-lg">
+        <div className="my-4 border border-foreground grid grid-cols-1 md:grid-cols-2 p-6 rounded-lg">
           <div className="flex items-center">
             <div className="w-[100px]">
               <p className="mr-4">Days</p>
@@ -127,7 +124,7 @@ function SellSummary() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="0">Payment Method....</SelectItem>
-                <SelectItem value="tranfer">tranfer</SelectItem>
+                <SelectItem value="transfer">transfer</SelectItem>
                 <SelectItem value="cash">cash</SelectItem>
               </SelectContent>
             </Select>
@@ -152,7 +149,7 @@ function SellSummary() {
                 <TableCell>
                   <div className="flex items-center">
                     <p className="block w-14">{item.payment_method}</p>
-                    {item.payment_method === "tranfer" ? <QrCode /> : <Banknote />}
+                    {item.payment_method === "transfer" ? <QrCode /> : <Banknote />}
                   </div>
                 </TableCell>
                 <TableCell>{item.brand}</TableCell>

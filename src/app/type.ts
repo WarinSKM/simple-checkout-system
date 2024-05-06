@@ -1,5 +1,5 @@
-export type PaymentMethod =  "tranfer" | "cash";
+export type PaymentMethod =  "transfer" | "cash";
 
-export type Brand = "bebpo" | "gerro" | "peko"
+export type Brand = "Bebpo" | "Gerro" | "Peko"
 
 export type ProductCategory = "normal" | "discount" | "free"

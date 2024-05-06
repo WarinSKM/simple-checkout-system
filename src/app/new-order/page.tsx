@@ -29,15 +29,25 @@ function NewOrder() {
   const config = resolveConfig(tailwindcssConfig);
   const fireStore = useFireStore();
 
-  const productNormal = useMemo(() => {
-    return productList.filter((item) => item.product_category === "normal");
-  }, [productList]);
-  const productDiscount = useMemo(() => {
-    return productList.filter((item) => item.product_category === "discount");
-  }, [productList]);
-  const productFree = useMemo(() => {
-    return productList.filter((item) => item.product_category === "free");
-  }, [productList]);
+  const productBebpo = useMemo(() => {
+    return productList.filter((item) => item.product_brand === 'Bebpo')
+  }, [productList])
+  const productGerro = useMemo(() => {
+    return productList.filter((item) => item.product_brand === 'Gerro')
+  }, [productList])
+  const productPeko = useMemo(() => {
+    return productList.filter((item) => item.product_brand === 'Peko')
+  }, [productList])
+
+  // const productNormal = useMemo(() => {
+  //   return productList.filter((item) => item.product_category === "normal");
+  // }, [productList]);
+  // const productDiscount = useMemo(() => {
+  //   return productList.filter((item) => item.product_category === "discount");
+  // }, [productList]);
+  // const productFree = useMemo(() => {
+  //   return productList.filter((item) => item.product_category === "free");
+  // }, [productList]);
 
   const fetchProducts = async () => {
     setLoadingProducts(true);
@@ -197,12 +207,12 @@ function NewOrder() {
                 <AccordionItem value="normal">
                   <AccordionTrigger>
                     <div className="w-full flex justify-between items-center">
-                      <p>Product</p>
+                      <p>Product Bebpo</p>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {productNormal.map((product, index) => (
+                      {productBebpo.map((product, index) => (
                         <ProductCard key={index} product={product} className="mb-4" onclick={addProductToOrder} />
                       ))}
                     </div>
@@ -211,12 +221,12 @@ function NewOrder() {
                 <AccordionItem value="discount">
                   <AccordionTrigger>
                     <div className="w-full flex justify-between items-center">
-                      <p>Discount</p>
+                      <p>Product Gerro</p>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {productDiscount.map((product, index) => (
+                      {productGerro.map((product, index) => (
                         <ProductCard key={index} product={product} className="mb-4" onclick={addProductToOrder} />
                       ))}
                     </div>
@@ -225,12 +235,12 @@ function NewOrder() {
                 <AccordionItem value="free">
                   <AccordionTrigger>
                     <div className="w-full flex justify-between items-center">
-                      <p>Free</p>
+                      <p>Product Peko</p>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {productFree.map((product, index) => (
+                      {productPeko.map((product, index) => (
                         <ProductCard key={index} product={product} className="mb-4" onclick={addProductToOrder} />
                       ))}
                     </div>

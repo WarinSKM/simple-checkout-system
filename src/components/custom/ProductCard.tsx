@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui
 import { cn } from "@/lib/utils";
 import { Separator } from "../ui/separator";
 import { Brand, ProductCategory } from "@/app/type";
+import Image from "next/image";
 
 export interface ProductInfo {
   product_id?: string;
@@ -26,7 +27,9 @@ function ProductCard({ className, product, onclick }: ProductCardProps) {
       className={cn("cursor-pointer", className)}
     >
       <CardContent className="p-6 flex flex-col items-center justify-center">
-        <div className="w-24 h-24 bg-slate-200"></div>
+        <div className="w-24 h-24 ">
+          <Image src={`/image/${product.product_brand.toLowerCase()}.jpg`} alt="logo-brand" width={96} height={96}/>
+        </div>
         <div>
           <CardTitle className="text-lg my-4">{product.product_name}</CardTitle>
           <CardDescription>{product.product_price} บาท</CardDescription>

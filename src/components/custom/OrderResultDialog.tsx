@@ -11,6 +11,7 @@ import ConfirmOrderDialog from "./ConfirmOrderDialog";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PaymentMethod } from "@/app/type";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface OrderResultDialogProps {
   orderItems: OrderItem[];
@@ -20,7 +21,7 @@ interface OrderResultDialogProps {
 function OrderResultDialog({ orderItems, onConfirmOrder }: OrderResultDialogProps) {
   const fullConfig = resolveConfig(tailwindcssConfig);
   const [open, setOpen] = useState(false);
-  const [payMethod, setPaymethod] = useState<PaymentMethod | ''>("");
+  const [payMethod, setPaymethod] = useState<PaymentMethod | "">("");
   const [openConfirm, setOpenConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [radioRequire, setRadioRequire] = useState(false);
@@ -77,17 +78,19 @@ function OrderResultDialog({ orderItems, onConfirmOrder }: OrderResultDialogProp
         <DialogTrigger asChild>
           <Button disabled={orderItems.length === 0}>Checkout</Button>
         </DialogTrigger>
-        <DialogContent className="">
+        <DialogContent className="max-h-screen">
           <DialogHeader>
             <DialogTitle>Confirm Order</DialogTitle>
           </DialogHeader>
-          <div className="">
-            <ol>
-              {orderItems.map((item) => (
-                <OrderItem key={item.product_name} {...item} />
-              ))}
-            </ol>
-          </div>
+          <ScrollArea className="h-[300px] md:h-[350px] lg:h-full mb-3 border-b-2 flex-grow">
+            <div className="h-full">
+              <ol>
+                {orderItems.map((item) => (
+                  <OrderItem key={item.product_name} {...item} />
+                ))}
+              </ol>
+            </div>
+          </ScrollArea>
           <div className="flex items-center justify-between">
             <p className="text-4xl">Total</p>
             <p className="text-4xl">฿ {orderItems.reduce((prev, nextItem) => prev + nextItem.product_price * nextItem.quatity, 0)}</p>
@@ -103,7 +106,7 @@ function OrderResultDialog({ orderItems, onConfirmOrder }: OrderResultDialogProp
               required
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="tranfer" id="r1" className="hidden peer" />
+                <RadioGroupItem value="transfer" id="r1" className="hidden peer" />
                 <Label
                   htmlFor="r1"
                   className={cn(
@@ -115,7 +118,7 @@ function OrderResultDialog({ orderItems, onConfirmOrder }: OrderResultDialogProp
                   )}
                 >
                   <QrCode className="mb-2" width={35} height={35} />
-                  <p>TRANFER</p>
+                  <p>TRANSFER</p>
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
