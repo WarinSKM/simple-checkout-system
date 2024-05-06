@@ -28,7 +28,7 @@ function ProductCard({ className, product, onclick }: ProductCardProps) {
     >
       <CardContent className="p-6 flex flex-col items-center justify-center">
         <div className="w-24 h-24 ">
-          <Image src={`/image/${product.product_brand.toLowerCase()}.jpg`} alt="logo-brand" width={96} height={96}/>
+          <Image priority src={`/image/${product.product_brand.toLowerCase()}.jpg`} alt="logo-brand" width={96} height={96}/>
         </div>
         <div>
           <CardTitle className="text-lg my-4">{product.product_name}</CardTitle>
