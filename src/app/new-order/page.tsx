@@ -66,7 +66,7 @@ function NewOrder() {
   const [orderList, setOrderList] = useState<OrderItem[]>([]);
 
   const addProductToOrder = (e: ProductInfo) => {
-    const orderIndex = orderList.findIndex((item) => item.product_name === e.product_name);
+    const orderIndex = orderList.findIndex((item) => item.product_id === e.product_id);
     if (orderIndex !== -1) {
       onAddOrder(orderList[orderIndex], orderIndex);
       return;
