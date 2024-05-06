@@ -23,20 +23,27 @@ interface OrderItem extends ProductInfo {
 }
 
 function NewOrder() {
-  const [accordion, setAccordion] = useState(["product", "discount", "free"])
+  const [accordion, setAccordion] = useState<string[]>(["free", 'discount'])
   const [productList, setProductList] = useState<ProductInfo[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const config = resolveConfig(tailwindcssConfig);
   const fireStore = useFireStore();
 
   const productBebpo = useMemo(() => {
-    return productList.filter((item) => item.product_brand === 'Bebpo')
+    return productList.filter((item) => item.product_brand === 'Bebpo' && item.product_category === 'product')
   }, [productList])
   const productGerro = useMemo(() => {
-    return productList.filter((item) => item.product_brand === 'Gerro')
+    return productList.filter((item) => item.product_brand === 'Gerro' && item.product_category === 'product')
   }, [productList])
   const productPeko = useMemo(() => {
-    return productList.filter((item) => item.product_brand === 'Peko')
+    return productList.filter((item) => item.product_brand === 'Peko' && item.product_category === 'product')
+  }, [productList])
+
+  const productFree = useMemo(() => {
+    return productList.filter((item) => item.product_category === 'free')
+  }, [productList])
+  const productDiscount = useMemo(() => {
+    return productList.filter((item) => item.product_category === 'discount')
   }, [productList])
 
 
@@ -55,26 +62,6 @@ function NewOrder() {
   useEffect(() => {
     fetchProducts();
   }, []);
-
-  // const test = useQuery({
-  //   queryKey: ["products"],
-  //   queryFn: fetchProducts,
-  // });
-
-  // const productList: ProductInfo[] = [
-  //   { title: "Bandana S", price: 90, imageUrl: "" },
-  //   { title: "Bandana M", price: 120, imageUrl: "" },
-  //   { title: "Bandana L", price: 140, imageUrl: "" },
-  //   { title: "Bandana XL", price: 160, imageUrl: "" },
-  //   { title: "[Free]Bandana S", price: 0, imageUrl: "" },
-  //   { title: "[Free]Bandana M", price: 0, imageUrl: "" },
-  //   { title: "[Free]Bandana L", price: 0, imageUrl: "" },
-  //   { title: "[Free]Bandana XL", price: 0, imageUrl: "" },
-  //   { title: "Shampoo Gerro", price: 440, imageUrl: "" },
-  //   { title: "Serum Gerro", price: 360, imageUrl: "" },
-  //   { title: "Pekko น้ำมันแซลม่อน", price: 360, imageUrl: "" },
-  //   { title: "Pekko ปลากรอบ", price: 360, imageUrl: "" },
-  // ];
 
   const [orderList, setOrderList] = useState<OrderItem[]>([]);
 
@@ -136,8 +123,6 @@ function NewOrder() {
         where("payment_method", "==", paymentMethod),
         where("product_name", "==", element.product_name)
       );
-      // doc(fireStore, "sale_total");
-      // const collQ = collection(fireStore, "sale_total", element.product_brand, format(today, "yyyy-MM-dd"), paymentMethod, element.product_name);
       const tempDoc = await getDocs(q);
       if (!tempDoc.empty) {
         const docQ = doc(fireStore, "sale_total", tempDoc.docs[0].id);
@@ -195,7 +180,7 @@ function NewOrder() {
           <CardContent className="overflow-y-auto">
             {!loadingProducts ? (
               <Accordion type="multiple" value={accordion} onValueChange={onAccordionChange} className="w-full">
-                <AccordionItem value="product">
+                <AccordionItem value="Bebpo">
                   <AccordionTrigger>
                     <div className="w-full flex justify-between items-center">
                       <p>Product Bebpo</p>
@@ -209,7 +194,7 @@ function NewOrder() {
                     </div>
                   </AccordionContent>
                 </AccordionItem>
-                <AccordionItem value="discount">
+                <AccordionItem value="Gerro">
                   <AccordionTrigger>
                     <div className="w-full flex justify-between items-center">
                       <p>Product Gerro</p>
@@ -223,7 +208,7 @@ function NewOrder() {
                     </div>
                   </AccordionContent>
                 </AccordionItem>
-                <AccordionItem value="free">
+                <AccordionItem value="Peko">
                   <AccordionTrigger>
                     <div className="w-full flex justify-between items-center">
                       <p>Product Peko</p>
@@ -232,6 +217,34 @@ function NewOrder() {
                   <AccordionContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {productPeko.map((product, index) => (
+                        <ProductCard key={index} product={product} className="mb-4" onclick={addProductToOrder} />
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="free">
+                  <AccordionTrigger>
+                    <div className="w-full flex justify-between items-center">
+                      <p>Product Free</p>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {productFree.map((product, index) => (
+                        <ProductCard key={index} product={product} className="mb-4" onclick={addProductToOrder} />
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="discount">
+                  <AccordionTrigger>
+                    <div className="w-full flex justify-between items-center">
+                      <p>Product Discount</p>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {productDiscount.map((product, index) => (
                         <ProductCard key={index} product={product} className="mb-4" onclick={addProductToOrder} />
                       ))}
                     </div>
