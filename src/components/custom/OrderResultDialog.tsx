@@ -82,7 +82,7 @@ function OrderResultDialog({ orderItems, onConfirmOrder }: OrderResultDialogProp
           <DialogHeader>
             <DialogTitle>Confirm Order</DialogTitle>
           </DialogHeader>
-          <ScrollArea className="h-[300px] md:h-[350px] lg:h-full mb-3 border-b-2 flex-grow">
+          <ScrollArea className="h-[300px] md:h-[350px] lg:h-[300px] mb-3 border-b-2 flex-grow">
             <div className="h-full">
               <ol>
                 {orderItems.map((item) => (
