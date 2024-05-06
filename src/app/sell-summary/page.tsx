@@ -134,7 +134,7 @@ function SellSummary() {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={5}>
+              <TableCell colSpan={4}>
                 <p className="text-2xl">Total</p>
               </TableCell>
               <TableCell className="text-2xl">{sellHistory.reduce((prev, nextVal) => prev + nextVal.price * nextVal.total_sale, 0)}</TableCell>
