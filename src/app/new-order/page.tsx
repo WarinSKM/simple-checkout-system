@@ -23,29 +23,28 @@ interface OrderItem extends ProductInfo {
 }
 
 function NewOrder() {
-  const [accordion, setAccordion] = useState<string[]>(["free", 'discount'])
+  const [accordion, setAccordion] = useState<string[]>(["free", "discount"]);
   const [productList, setProductList] = useState<ProductInfo[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const config = resolveConfig(tailwindcssConfig);
   const fireStore = useFireStore();
 
   const productBebpo = useMemo(() => {
-    return productList.filter((item) => item.product_brand === 'Bebpo' && item.product_category === 'product')
-  }, [productList])
+    return productList.filter((item) => item.product_brand === "Bebpo" && item.product_category === "product");
+  }, [productList]);
   const productGerro = useMemo(() => {
-    return productList.filter((item) => item.product_brand === 'Gerro' && item.product_category === 'product')
-  }, [productList])
+    return productList.filter((item) => item.product_brand === "Gerro" && item.product_category === "product");
+  }, [productList]);
   const productPeko = useMemo(() => {
-    return productList.filter((item) => item.product_brand === 'Peko' && item.product_category === 'product')
-  }, [productList])
+    return productList.filter((item) => item.product_brand === "Peko" && item.product_category === "product");
+  }, [productList]);
 
   const productFree = useMemo(() => {
-    return productList.filter((item) => item.product_category === 'free')
-  }, [productList])
+    return productList.filter((item) => item.product_category === "free");
+  }, [productList]);
   const productDiscount = useMemo(() => {
-    return productList.filter((item) => item.product_category === 'discount')
-  }, [productList])
-
+    return productList.filter((item) => item.product_category === "discount");
+  }, [productList]);
 
   const fetchProducts = async () => {
     setLoadingProducts(true);
@@ -117,11 +116,7 @@ function NewOrder() {
     today.setHours(0, 0, 0, 0);
     for (let i = 0; i < orderList.length; i++) {
       const element = orderList[i];
-      const q = query(
-        collection(fireStore, "sale_total"),
-        where("date", "==", today),
-        where("product_name", "==", element.product_name)
-      );
+      const q = query(collection(fireStore, "sale_total"), where("date", "==", today), where("product_name", "==", element.product_name));
       const tempDoc = await getDocs(q);
       if (!tempDoc.empty) {
         const docQ = doc(fireStore, "sale_total", tempDoc.docs[0].id);
@@ -155,11 +150,17 @@ function NewOrder() {
     });
 
     clearOrder();
+    topFunction();
+  };
+
+  const topFunction = () => {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
   };
 
   const onAccordionChange = (e: string[]) => {
-    setAccordion(e)
-  }
+    setAccordion(e);
+  };
 
   return (
     <main className="min-h-screen p-6 flex flex-col">

@@ -39,7 +39,7 @@ function OrderDetail({ orderItems }: OrderDetailProps) {
         </DialogTrigger>
         <DialogContent className="">
           <DialogHeader>
-            <DialogTitle>Confirm Order</DialogTitle>
+            <DialogTitle>Order Detail</DialogTitle>
           </DialogHeader>
           <ScrollArea className="h-[300px] md:h-[350px] lg:h-[300px] mb-3 border-b-2 flex-grow">
             <div className="h-full">
