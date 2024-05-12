@@ -217,7 +217,7 @@ function OrderHistory() {
           <TableBody>
             {sellHistoryFilter.map((item) => (
               <TableRow key={item.order_create_datetime.toMillis()}>
-                <TableCell>{format(item.order_create_datetime.toDate(), "dd/mm/yy HH:mm")}</TableCell>
+                <TableCell>{format(item.order_create_datetime.toDate(), "dd/MM/yy HH:mm")}</TableCell>
                 <TableCell>{item.order_payment_method}</TableCell>
                 <TableCell>{item.items.reduce((prev, next) => prev + next.quatity, 0)}</TableCell>
                 <TableCell>{item.items.reduce((prev, next) => prev + next.product_price * next.quatity, 0).toLocaleString("us-Us")}</TableCell>
