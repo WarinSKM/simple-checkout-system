@@ -209,6 +209,7 @@ function ManageProduct() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Product ID</TableHead>
               <TableHead>Product Brand</TableHead>
               <TableHead>Product Name</TableHead>
               <TableHead>Product Category</TableHead>
@@ -218,6 +219,7 @@ function ManageProduct() {
           <TableBody>
             {productLists.map((item) => (
               <TableRow key={item.product_id}>
+                <TableCell>{item.product_id}</TableCell>
                 <TableCell>{item.product_brand}</TableCell>
                 <TableCell>{item.product_name}</TableCell>
                 <TableCell>{item.product_category}</TableCell>
