@@ -49,8 +49,8 @@ function ManageProduct() {
   const [loadingProducts, setLoadingProducts] = useState(true);
 
   const productLists = useMemo(() => {
-    return productList.sort((a, b) => a.product_brand > b.product_brand ? 1 : -1)
-  },[productList])
+    return productList.sort((a, b) => (a.product_brand > b.product_brand ? 1 : -1));
+  }, [productList]);
 
   const BRAND_OPTIONS = [
     { value: "Peko", label: "Peko" },
@@ -67,7 +67,6 @@ function ManageProduct() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
     const { isConfirmed } = await Swal.fire({
       title: "ยืนยันการเพิ่มสินค้า",
       icon: "question",
@@ -100,7 +99,6 @@ function ManageProduct() {
       result.push({ ...(doc.data() as ProductInfo), product_id: doc.id });
     });
     setProductList(result);
-    console.log(result);
     setLoadingProducts(false);
   };
 
