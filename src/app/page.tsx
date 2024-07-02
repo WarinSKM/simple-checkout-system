@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Box, File } from "lucide-react";
+import { ShoppingCart, Box, File, Package } from "lucide-react";
 import Image from "next/image";
 
 export default function Home() {
@@ -29,6 +29,14 @@ export default function Home() {
             <div className="flex flex-col justify-center items-center">
               <File className="mb-3" height={50} width={50} />
               <p className="text-2xl">Sale Summary</p>
+            </div>
+          </Button>
+        </Link>
+        <Link href="/manage-product" className="col-span-2">
+          <Button variant="outline" className="h-32 w-full mb-8">
+            <div className="flex flex-col justify-center items-center">
+              <Package className="mb-3" height={50} width={50} />
+              <p className="text-2xl">Add product</p>
             </div>
           </Button>
         </Link>
