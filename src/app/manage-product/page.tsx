@@ -19,6 +19,7 @@ import { ProductInfo } from "@/components/custom/ProductCard";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { useFireStore } from "../utils/firebase";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Edit, Trash } from "lucide-react";
 
 const formSchema = z.object({
   // username: z.string().min(2, {
@@ -47,6 +48,8 @@ function ManageProduct() {
   const fireStore = useFireStore();
   const [productList, setProductList] = useState<ProductInfo[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
+  const [edit, setEdit] = useState(false);
+  const [currId, setCurrId] = useState<string | undefined>();
 
   const productLists = useMemo(() => {
     return productList.sort((a, b) => (a.product_brand > b.product_brand ? 1 : -1));
@@ -56,6 +59,8 @@ function ManageProduct() {
     { value: "Peko", label: "Peko" },
     { value: "Bebpo", label: "Bebpo" },
     { value: "Gerro", label: "Gerro" },
+    { value: "Gerro_treat", label: "Gerro treat" },
+    { value: "Gerro_toy", label: "Gerro toy" },
   ];
 
   const CATEGORY_OPTIONS = [
@@ -67,6 +72,52 @@ function ManageProduct() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    if (edit) {
+      await editProduct(values);
+    } else {
+      await createProduct(values);
+    }
+    setEdit(false);
+    setCurrId(undefined);
+    form.reset();
+    fetchProducts();
+  }
+
+  const editProduct = async (values: z.infer<typeof formSchema>) => {
+    const { isConfirmed } = await Swal.fire({
+      title: "ยืนยันการแก้ไขสินค้า",
+      icon: "question",
+      confirmButtonText: "ยืนยัน",
+      cancelButtonText: "ยกเลิก",
+      showCancelButton: true,
+      confirmButtonColor: config.theme.colors.destructive.DEFAULT,
+      reverseButtons: true,
+    });
+    if (!isConfirmed) return;
+
+    const body = { ...values, product_id: currId };
+
+    const res = await axios.post("/api/update-product", body);
+    if (res.data.message !== "fail") {
+      Swal.fire({
+        title: "สำเร็จ",
+        icon: "success",
+        timer: 1000,
+        confirmButtonText: "ยืนยัน",
+        confirmButtonColor: config.theme.colors.destructive.DEFAULT,
+      });
+    } else {
+      Swal.fire({
+        title: "ไม่สำเร็จ",
+        icon: "error",
+        timer: 1000,
+        confirmButtonText: "ยืนยัน",
+        confirmButtonColor: config.theme.colors.destructive.DEFAULT,
+      });
+    }
+  };
+
+  const createProduct = async (values: z.infer<typeof formSchema>) => {
     const { isConfirmed } = await Swal.fire({
       title: "ยืนยันการเพิ่มสินค้า",
       icon: "question",
@@ -86,9 +137,7 @@ function ManageProduct() {
       confirmButtonText: "ยืนยัน",
       confirmButtonColor: config.theme.colors.destructive.DEFAULT,
     });
-
-    fetchProducts();
-  }
+  };
 
   const fetchProducts = async () => {
     setLoadingProducts(true);
@@ -106,6 +155,55 @@ function ManageProduct() {
     fetchProducts();
   }, []);
 
+  const handleEdit = (id: string) => {
+    setEdit(true);
+    setCurrId(id);
+    const currProduct = productLists.find((item) => item.product_id === id);
+    form.setValue("product_brand", currProduct?.product_brand!);
+    form.setValue("product_category", currProduct?.product_category!);
+    form.setValue("product_name", currProduct?.product_name!);
+    form.setValue("product_price", currProduct?.product_price!);
+  };
+
+  const handleCancel = () => {
+    form.reset(DEFAULT_VALUE);
+    setEdit(false);
+    setCurrId(undefined);
+  };
+
+  const handleDelete = async (id: string) => {
+    const { isConfirmed } = await Swal.fire({
+      title: "ยืนยันการลบสินค้า",
+      icon: "question",
+      confirmButtonText: "ยืนยัน",
+      cancelButtonText: "ยกเลิก",
+      showCancelButton: true,
+      confirmButtonColor: config.theme.colors.destructive.DEFAULT,
+      reverseButtons: true,
+    });
+    if (!isConfirmed) return;
+
+    const res = await axios.post("/api/delete-product", { product_id: id });
+    if (res.data.message !== "fail") {
+      Swal.fire({
+        title: "สำเร็จ",
+        icon: "success",
+        timer: 1000,
+        confirmButtonText: "ยืนยัน",
+        confirmButtonColor: config.theme.colors.destructive.DEFAULT,
+      });
+    } else {
+      Swal.fire({
+        title: "ไม่สำเร็จ",
+        icon: "error",
+        timer: 1000,
+        confirmButtonText: "ยืนยัน",
+        confirmButtonColor: config.theme.colors.destructive.DEFAULT,
+      });
+    }
+    fetchProducts();
+  };
+
   return (
     <main className="min-h-screen flex flex-col items-center p-5">
       <div className="col-span-full h-fit mb-5">
@@ -117,7 +215,7 @@ function ManageProduct() {
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Add Product</CardTitle>
+          <CardTitle>{edit ? "Edit Product" : "Add Product"}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="mt-4">
@@ -194,7 +292,7 @@ function ManageProduct() {
                   )}
                 />
                 <div className="mt-4 flex items-center justify-between">
-                  <Button type="button" variant="muted" onClick={() => form.reset(DEFAULT_VALUE)}>
+                  <Button type="button" variant="muted" onClick={handleCancel}>
                     Cancle
                   </Button>
                   <Button type="submit">Submit</Button>
@@ -224,6 +322,17 @@ function ManageProduct() {
                 <TableCell>{item.product_name}</TableCell>
                 <TableCell>{item.product_category}</TableCell>
                 <TableCell>{item.product_price.toLocaleString()}</TableCell>
+                <TableCell className="space-x-1">
+                  <Button
+                    className="bg-yellow-200 hover:bg-yellow-200/20 text-black hover:text-black/20"
+                    onClick={() => handleEdit(item.product_id!)}
+                  >
+                    <Edit />
+                  </Button>
+                  <Button className="bg-red-400 hover:bg-red-400/20" onClick={() => handleDelete(item.product_id!)}>
+                    <Trash />
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

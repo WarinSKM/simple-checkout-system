@@ -35,6 +35,12 @@ function NewOrder() {
   const productGerro = useMemo(() => {
     return productList.filter((item) => item.product_brand === "Gerro" && item.product_category === "product");
   }, [productList]);
+  const productGerroTreat = useMemo(() => {
+    return productList.filter((item) => item.product_brand === "Gerro_treat" && item.product_category === "product");
+  }, [productList]);
+  const productGerroToy = useMemo(() => {
+    return productList.filter((item) => item.product_brand === "Gerro_toy" && item.product_category === "product");
+  }, [productList]);
   const productPeko = useMemo(() => {
     return productList.filter((item) => item.product_brand === "Peko" && item.product_category === "product");
   }, [productList]);
@@ -48,7 +54,7 @@ function NewOrder() {
 
   const fetchProducts = async () => {
     setLoadingProducts(true);
-    const q = query(collection(fireStore, "products"), orderBy("product_name", "asc"));
+    const q = query(collection(fireStore, "products"), where("product_brand", "!=", "Peko"), orderBy("product_name", "asc"));
     const docSnapShot = await getDocs(q);
     const result: ProductInfo[] = [];
     docSnapShot.forEach((doc) => {
@@ -207,7 +213,35 @@ function NewOrder() {
                     </div>
                   </AccordionContent>
                 </AccordionItem>
-                <AccordionItem value="Peko">
+                <AccordionItem value="Gerro_treat">
+                  <AccordionTrigger>
+                    <div className="w-full flex justify-between items-center">
+                      <p>Product Gerro Treat</p>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {productGerroTreat.map((product, index) => (
+                        <ProductCard key={index} product={product} className="mb-4" onclick={addProductToOrder} />
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="Gerro_toy">
+                  <AccordionTrigger>
+                    <div className="w-full flex justify-between items-center">
+                      <p>Product Gerro Toy</p>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {productGerroToy.map((product, index) => (
+                        <ProductCard key={index} product={product} className="mb-4" onclick={addProductToOrder} />
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+                {/* <AccordionItem value="Peko">
                   <AccordionTrigger>
                     <div className="w-full flex justify-between items-center">
                       <p>Product Peko</p>
@@ -220,7 +254,7 @@ function NewOrder() {
                       ))}
                     </div>
                   </AccordionContent>
-                </AccordionItem>
+                </AccordionItem> */}
                 <AccordionItem value="free">
                   <AccordionTrigger>
                     <div className="w-full flex justify-between items-center">
